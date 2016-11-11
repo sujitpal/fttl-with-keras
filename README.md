@@ -10,7 +10,15 @@ I describe how a Deep Convolutional Network (DCNN) trained on the ImageNet datas
 
 Dataset used comes from [Diabetic Retinopathy Detection competition](https://www.kaggle.com/c/diabetic-retinopathy-detection) on Kaggle. Dataset is a set of 35,126 of digital color fundus photographs of the retina. The code here uses a sample of 1,000 images sampled from this dataset, 200 per each of the 5 Diabetes Retinopathy images (No DR, Mild DR, Moderate DR, Severe DR and Proliferative DR). See the [data/README.md](data/README.md) for details.
 
+## VGG-16 Model
+
+<img src="docs/vgg16-original.png"/>
+
 ## Results
+
+### Transfer Learning
+
+<img src="docs/vgg16-tl.png"/>
 
 ### Transfer Learning + Logistic Regression
 
@@ -93,6 +101,10 @@ Results in lower performance than 1 layer MLP. Other tuning was to increase batc
     
     avg / total       0.64      0.63      0.63       300
     
+
+### Fine Tuning
+
+<img src="docs/vgg16-ft.png"/>
 
 ### Fine Tuning with Random Weights for FC
 
