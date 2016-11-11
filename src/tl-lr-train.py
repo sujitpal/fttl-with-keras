@@ -26,7 +26,6 @@ clf = LogisticRegression()
 clf.fit(Xtrain, ytrain)
 
 ytest_ = clf.predict(Xtest)
-
 fttlutils.print_stats(ytest, ytest_, "LR Model")
 with open(os.path.join(MODEL_DIR, "lr-model.pkl"), "wb") as fmodel:
     pickle.dump(clf, fmodel)

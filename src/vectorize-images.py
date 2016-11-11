@@ -2,8 +2,9 @@
 from __future__ import division, print_function
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg16 import preprocess_input
-from keras.preprocessing import image
+from keras.models import Model
 from keras.optimizers import SGD
+from keras.preprocessing import image
 import numpy as np
 import os
 
@@ -50,13 +51,9 @@ VEC_FILE_Y = os.path.join(DATA_DIR, "images-y.txt")
 VEC_FILE_F = os.path.join(DATA_DIR, "images-f.txt")
 
 # load VGG-16 model
-model = VGG16(weights="imagenet", include_top=False)
-# list out layers (needed if we instantiate full model and clone
-# bottleneck model from it)
-#for i, layer in enumerate(vgg16_model.layers):
-#    print(i, layer.name)
-#model = Model(input=vgg16_model.input, 
-#                output=vgg16_model.get_layer("block5_pool").output)
+vgg16_model = VGG16(weights="imagenet", include_top=True)
+model = Model(input=vgg16_model.input, 
+              output=vgg16_model.get_layer("block5_pool").output)
 
 sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(optimizer=sgd, loss="categorical_crossentropy")

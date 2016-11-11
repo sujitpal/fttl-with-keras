@@ -14,7 +14,10 @@ def presentation_goals():
     fig, axes = plt.subplots(3, 3)
     axes = np.ravel(axes)
     for i in range(9):
-        img = plt.imread(os.path.join(IMAGE_DIR, files[i]))
+        label = np.random.randint(4)
+        files = os.listdir(os.path.join(IMAGE_DIR, str(label)))
+        img_file = files[np.random.randint(len(files))]
+        img = plt.imread(os.path.join(IMAGE_DIR, str(label), img_file))
         axes[i].imshow(img, interpolation="nearest")
         axes[i].set_xticks([])
         axes[i].set_yticks([])
@@ -66,5 +69,5 @@ def what_is_dr():
     plt.show()
     
 ######################## main ########################
-presentation_goals()
-#what_is_dr()
+#presentation_goals()
+what_is_dr()
