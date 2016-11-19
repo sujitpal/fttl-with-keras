@@ -1,6 +1,6 @@
 # Transfer Learning and Fine Tuning for Cross Domain Image Classification with Keras
 
-Supporting code for my talk at [Accel.AI](http://accel.ai/) Demystifying Deep Learning and AI event on November 18-19 2016 at Oakland CA.
+Supporting code for my talk at [Accel.AI](http://accel.ai/) Demystifying Deep Learning and AI event on November 19-20 2016 at Oakland CA.
 
 ## Abstract:
 

@@ -69,5 +69,5 @@ def what_is_dr():
     plt.show()
     
 ######################## main ########################
-#presentation_goals()
-what_is_dr()
+presentation_goals()
+#what_is_dr()
