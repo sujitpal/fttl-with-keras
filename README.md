@@ -2,6 +2,8 @@
 
 Supporting code for my talk at [Accel.AI](http://accel.ai/) Demystifying Deep Learning and AI event on November 19-20 2016 at Oakland CA.
 
+Slides are [here](http://www.slideshare.net/sujitpal/transfer-learning-and-fine-tuning-for-cross-domain-image-classification-with-keras)
+
 ## Abstract:
 
 I describe how a Deep Convolutional Network (DCNN) trained on the ImageNet dataset can be used to classify images in a completely different domain. The intuition that the training process teaches the DCNN to extract good features from images is explored with visualizations. Transfer Learning freezes the bottom layers of the DCNN to extract image vectors from a training set in a different domain, which can then be used to train a new classifier for this domain. Fine tuning involves training the pre-trained network further for the target domain. Both approaches are demonstrated using a VGG-16 network pre-trained on ImageNet to classify medical images into 5 categories. Code examples are provided using Keras.
