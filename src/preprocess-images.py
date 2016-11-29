@@ -93,7 +93,7 @@ def crop_image_to_aspect(image, tar=1.2):
         return cropped
     
 
-def brighten_image(image, global_mean_v):
+def brighten_image_hsv(image, global_mean_v):
     image_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     h, s, v = cv2.split(image_hsv)
     mean_v = int(np.mean(v))
@@ -101,6 +101,13 @@ def brighten_image(image, global_mean_v):
     image_hsv = cv2.merge((h, s, v))
     image_bright = cv2.cvtColor(image_hsv, cv2.COLOR_HSV2RGB)
     return image_bright
+
+
+def brighten_image_rgb(image, global_mean_rgb):
+    r, g, b = cv2.split(image)
+    m = np.array([np.mean(r), np.mean(g), np.mean(b)])
+    brightened = image + global_mean_v - m
+    return brightened
     
 
 ############################# main #############################
@@ -108,20 +115,46 @@ def brighten_image(image, global_mean_v):
 DATA_DIR = "../data/files/sample"
 DATA_DIR2 = "../data/files/sample2"
 
+# random sample for printing
+sample_image_idxs = set(np.random.randint(0, high=1000, size=9).tolist())
+sample_images = []
+
 curr_idx = 0
 vs = []
+mean_rgbs = []
 for image_dir, image_name in get_next_image_loc(DATA_DIR):
     if curr_idx % 100 == 0:
         print("Reading {:d} images".format(curr_idx))
     image = cv2.imread(os.path.join(DATA_DIR, image_dir, image_name))
+    if curr_idx in sample_image_idxs:
+        sample_images.append(image)
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(image_hsv)
     vs.append(np.mean(v))
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    r, g, b = cv2.split(image_rgb)
+    mean_rgbs.append(np.array([np.mean(r), np.mean(g), np.mean(b)]))
     curr_idx += 1
 print("Reading {:d} images, complete".format(curr_idx))    
 global_mean_v = int(np.mean(np.array(vs)))
+global_mean_rgbs = np.mean(mean_rgbs, axis=0)
 
-# crop images to aspect
+# plot sample images at various steps
+sample_images_rgb = [cv2.cvtColor(simg, cv2.COLOR_BGR2RGB) 
+                for simg in sample_images]
+plot_images(sample_images_rgb)
+sample_cropped = [crop_image_to_aspect(simg) for simg in sample_images_rgb]
+sample_resized = [cv2.resize(simg, (int(1.2 * 224), 224))
+                for simg in sample_cropped]
+plot_images(sample_resized)
+sample_brightened_hsv = [brighten_image_hsv(simg, global_mean_v) 
+                for simg in sample_resized]
+plot_images(sample_brightened_hsv)
+sample_brightened_rgb = [brighten_image_rgb(simg, global_mean_rgbs) 
+                for simg in sample_resized]
+plot_images(sample_brightened_rgb)
+
+# save all images to disk
 curr_idx = 0
 for image_dir, image_name in get_next_image_loc(DATA_DIR):
     if curr_idx % 100 == 0:
@@ -129,7 +162,8 @@ for image_dir, image_name in get_next_image_loc(DATA_DIR):
     image = cv2.imread(os.path.join(DATA_DIR, image_dir, image_name))
     cropped = crop_image_to_aspect(image)
     resized = cv2.resize(cropped, (int(1.2 * 224), 224))
-    brightened = brighten_image(resized, global_mean_v)
+#    brightened = brighten_image_hsv(resized, global_mean_v)
+    brightened = brighten_image_rgb(resized, global_mean_rgbs)
     plt.imsave(os.path.join(DATA_DIR2, image_dir, image_name), brightened)
     curr_idx += 1
 print("Wrote {:d} images, complete".format(curr_idx))
