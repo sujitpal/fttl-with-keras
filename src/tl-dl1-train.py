@@ -2,6 +2,7 @@
 from __future__ import division, print_function
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Dropout, Input
+from keras.layers.normalization import BatchNormalization
 from keras.models import Model, load_model
 from keras.utils import np_utils
 import numpy as np
@@ -34,6 +35,7 @@ fc1 = Dense(256,
             activation="relu",
             init="he_uniform",
             name="dl1fc1")(imgvecs)
+fc1 = BatchNormalization()(fc1)            
 fc1 = Dropout(0.5)(fc1)
 # output layer: (None, 5)
 predictions = Dense(5, activation="softmax", name="dl1preds")(fc1)

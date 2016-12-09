@@ -45,7 +45,9 @@ def vectorize_batch(image_locs, image_dir, image_width, model,
 DATA_DIR = "../data/files"
 IMAGE_DIR = os.path.join(DATA_DIR, "sample")
 BATCH_SIZE = 10
+
 IMAGE_WIDTH = 224
+
 VEC_FILE_X = os.path.join(DATA_DIR, "images-X.txt")
 VEC_FILE_Y = os.path.join(DATA_DIR, "images-y.txt")
 VEC_FILE_F = os.path.join(DATA_DIR, "images-f.txt")
@@ -61,6 +63,7 @@ model.compile(optimizer=sgd, loss="categorical_crossentropy")
 fvec_x = open(VEC_FILE_X, "wb")
 fvec_y = open(VEC_FILE_Y, "wb")
 fvec_f = open(VEC_FILE_F, "wb")
+
 batch = []
 nbr_written = 0
 for image_loc in get_next_image_loc(IMAGE_DIR):
@@ -78,3 +81,4 @@ if len(batch) > 0:
 fvec_x.close()    
 fvec_y.close()
 fvec_f.close()
+    
