@@ -30,7 +30,10 @@ print(Xtrain.shape, Xtest.shape, Ytrain.shape, Ytest.shape)
 # input: (None, 25088)
 imgvecs = Input(shape=(Xtrain.shape[1],), dtype="float32")
 # hidden layer: (None, 256)
-fc1 = Dense(256, activation="relu", name="dl1fc1")(imgvecs)
+fc1 = Dense(256,
+            activation="relu",
+            init="he_uniform",
+            name="dl1fc1")(imgvecs)
 fc1 = Dropout(0.5)(fc1)
 # output layer: (None, 5)
 predictions = Dense(5, activation="softmax", name="dl1preds")(fc1)
