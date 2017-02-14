@@ -6,7 +6,7 @@ from keras.layers.core import Activation, Dense, Flatten
 from keras.layers.convolutional import Convolution2D, ZeroPadding2D
 from keras.layers.normalization import BatchNormalization
 from keras.layers.pooling import MaxPooling2D
-from keras.models import Model
+from keras.models import Model, load_model
 from scipy.misc import imresize
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,8 +75,16 @@ def preprocess_image(img, resize_wh, mean_image):
     img4d = np.clip(img4d, 0, 255).astype("uint8")
     return img4d
     
+DATA_DIR = "../data/vgg-cnn"
+CAT_IMAGE = os.path.join(DATA_DIR, "cat.jpg")
+MEAN_IMAGE = os.path.join(DATA_DIR, "mean_image.npy")
+CAFFE_WEIGHTS_DIR = os.path.join(DATA_DIR, "saved-weights")
+LABEL_FILE = os.path.join(DATA_DIR, "caffe2keras-labels.txt")
+KERAS_MODEL_FILE = os.path.join(DATA_DIR, "vggcnn-keras.h5")
+RESIZE_WH = 224
+
 # caffe model layers (reference)
-caffe_layer_names = [
+CAFFE_LAYER_NAMES = [
     "data", 
     "conv1", "norm1", "pool1",
     "conv2", "pool2",
@@ -87,7 +95,7 @@ caffe_layer_names = [
     "fc7",
     "prob"
 ]
-caffe_layer_shapes = {
+CAFFE_LAYER_SHAPES = {
     "data" : (10, 3, 224, 224),
     "conv1": (10, 96, 109, 109),
     "norm1": (10, 96, 109, 109),
@@ -105,8 +113,8 @@ caffe_layer_shapes = {
 }
 
 print("caffe:")
-for layer_name in caffe_layer_names:
-    print(layer_name, caffe_layer_shapes[layer_name])
+for layer_name in CAFFE_LAYER_NAMES:
+    print(layer_name, CAFFE_LAYER_SHAPES[layer_name])
 
 # data (10, 3, 224, 224)
 # conv1 (10, 96, 109, 109)
@@ -127,8 +135,6 @@ for layer_name in caffe_layer_names:
 K.set_image_dim_ordering("th")
 
 # load weights
-CAFFE_WEIGHTS_DIR = "/Users/palsujit/Projects/fttl-with-keras/data/vgg-cnn/saved-weights"
-
 W_conv1 = transform_conv_weight(np.load(os.path.join(CAFFE_WEIGHTS_DIR, "W_conv1.npy")))
 b_conv1 = np.load(os.path.join(CAFFE_WEIGHTS_DIR, "b_conv1.npy"))
 
@@ -235,15 +241,11 @@ for layer in model.layers:
 
 # prediction
 id2label = {}
-flabel = open("../data/caffe2keras-labels.txt", "rb")
+flabel = open(LABEL_FILE, "rb")
 for line in flabel:
     lid, lname = line.strip().split("\t")
     id2label[int(lid)] = lname
 flabel.close()
-
-CAT_IMAGE = "/Users/palsujit/Projects/fttl-with-keras/data/vgg-cnn/cat.jpg"
-RESIZE_WH = 224
-MEAN_IMAGE = "/Users/palsujit/Projects/fttl-with-keras/data/vgg-cnn/mean_image.npy"
 
 mean_image = np.load(MEAN_IMAGE)
 image = plt.imread(CAT_IMAGE)
@@ -260,3 +262,7 @@ top_preds = np.argsort(preds)[::-1][0:10]
 
 pred_probas = [(x, id2label[x], preds[x]) for x in top_preds]
 print(pred_probas)
+
+print("Saving model...")
+model.save(KERAS_MODEL_FILE)
+
